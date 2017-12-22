@@ -65,7 +65,7 @@ class connectionThread(threading.Thread):
             logging.info("Waiting for connection..")
             conn, address = self.s.accept()
             logging.info("Client connected")
-            c = client(conn, repodata)
+            c = client(conn, self.repodata)
             c.start()
             self.clients.append(c)
 
