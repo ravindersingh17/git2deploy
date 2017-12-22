@@ -25,8 +25,12 @@ class client(threading.Thread):
                 return
 
     def process(self):
+        logging.info("Data {0}".format(self.data))
         # Break data into repo name, secret and payload
-        repo, secret, payload = self.data.decode("utf-8").split(" ", 2)
+        try:
+            repo, secret, payload = self.data.decode("utf-8").split(" ", 2)
+        except Exception as e:
+            logging.info("Error {0}".format(str(e)))
         logging.info("REPO:" + repo)
         logging.info("SECRET: " + secret)
         logging.info("PAYLOAD: " + payload)
@@ -47,11 +51,8 @@ class connectionThread(threading.Thread):
         except FileNotFoundError:
             pass
         try:
-            logging.debug("Creating socket")
             self.s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            logging.debug("Created socket")
             self.s.bind(sock_addr)
-            logging.debug("Bound to socket")
             self.s.listen(5)
         except socket.error as e:
             logging.critical('Failed to create socket: {0}'.format(str(e)))
