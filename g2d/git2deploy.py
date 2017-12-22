@@ -50,6 +50,8 @@ class connectionThread(threading.Thread):
         except socket.error:
             logging.critical('Failed to create socket')
             sys.exit()
+        except FileNotFoundError:
+            pass
         self.clients = []
 
     def run(self):
