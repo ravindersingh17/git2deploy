@@ -52,7 +52,7 @@ class connectionThread(threading.Thread):
             logging.debug("Bound to socket")
             self.s.listen(5)
         except socket.error as e:
-            logging.critical('Failed to create socket: '. str(e))
+            logging.critical('Failed to create socket: {0}'.format(str(e)))
             sys.exit()
         except FileNotFoundError:
             pass
