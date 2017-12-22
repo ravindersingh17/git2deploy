@@ -15,6 +15,7 @@ class client(threading.Thread):
         self.repodata = repodata
 
     def run(self):
+        logging.info("In client process")
         while True:
             data = self.conn.recv(1024)
             if not data:
