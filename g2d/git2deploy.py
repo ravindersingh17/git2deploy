@@ -4,6 +4,8 @@ import sys, os
 import logging
 import time
 from g2d.daemon import Daemon
+from hashlib import sha1
+import hmac
 SOCK_ADDR = "/tmp/git2deploy.sock"
 LOG_FILE = "/var/log/git2deploy.log"
 
@@ -28,12 +30,13 @@ class client(threading.Thread):
     def process(self):
         # Break data into repo name, secret and payload
         try:
-            repo, secret, payload = self.data.decode("utf-8").split(" ", 2)
+            repo, signature, payload = self.data.decode("utf-8").split(" ", 2)
         except Exception as e:
             logging.info("Invalid data")
         logging.debug("REPO:" + repo)
-        logging.debug("SECRET: " + secret)
-        logging.debug("PAYLOAD: " + payload)
+        logging.debug("SIGNATURE: " + signature)
+        hashed = hmac.new(self.repodata[repo]["secret"], payload, sha1)
+        logging.info("Calculated signature {0}".format(hashed.digest()))
 
 
     def send_msg(self,msg):
