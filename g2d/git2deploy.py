@@ -31,18 +31,18 @@ class client(threading.Thread):
     def process(self):
         # Break data into repo name, secret and payload
         try:
-            repo, signature, payload = self.data.decode("utf-8").strip().split(" ", 2)
+            repo, signature, payload = self.data.strip().split(b" ", 2)
         except Exception as e:
             logging.info("Invalid data")
             return
-        logging.debug("REPO:" + repo)
-        logging.debug("SIGNATURE: " + signature)
+        logging.debug("REPO:" + repo.decode("utf-8"))
+        logging.debug("SIGNATURE: " + signature.decode("utf-8"))
         h = md5()
-        h.update(payload.encode("utf-8"))
+        h.update(payload)
         logging.debug("payload md5 " + h.hexdigest())
         try:
             logging.debug("Calculating hash")
-            hashed = hmac.new(self.repodata[repo]["secret"], payload.encode("utf-8"), sha1)
+            hashed = hmac.new(self.repodata[repo]["secret"].encode("utf-8"), payload, sha1)
             logging.debug("Calculated hash")
             logging.info("Calculated signature {0}".format(hashed.hexdigest()))
         except Exception as e:
