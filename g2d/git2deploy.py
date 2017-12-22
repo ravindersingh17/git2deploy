@@ -37,7 +37,7 @@ class client(threading.Thread):
         logging.debug("SIGNATURE: " + signature)
         try:
             logging.debug("Calculating hash")
-            hashed = hmac.new(self.repodata[repo]["secret"], payload, sha1)
+            hashed = hmac.new(self.repodata[repo]["secret"], payload.encode("utf-8"), sha1)
             logging.debug("Calculated hash")
             logging.info("Calculated signature {0}".format(hashed.digest()))
         except Exception as e:
