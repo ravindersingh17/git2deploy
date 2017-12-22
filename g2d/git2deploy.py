@@ -5,7 +5,8 @@ import logging
 import time
 from g2d.daemon import Daemon
 from hashlib import sha1
-import hmac,md5
+from hashlib import md5
+import hmac
 SOCK_ADDR = "/tmp/git2deploy.sock"
 LOG_FILE = "/var/log/git2deploy.log"
 
