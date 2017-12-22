@@ -3,7 +3,7 @@ import threading
 import sys, os
 import logging
 import time
-from daemon import Daemon
+from g2d.daemon import Daemon
 SOCK_ADDR = "/tmp/git2deploy.sock"
 
 class client(threading.Thread):
@@ -48,25 +48,12 @@ class connectionThread(threading.Thread):
             self.clients.append(c)
 
 class G2dDaemon(Daemon):
+
+    def __init__(self, pidfile):
+        super(G2dDaemon, self).__init__(pidfile)
     def run(self):
         logging.basicConfig(filename="/var/log/git2deploy.log", level=logging.DEBUG)
         get_conns = connectionThread(SOCK_ADDR)
         get_conns.start()
         while True:
             time.sleep(.1)
-
-
-
-def main(arg):
-    daemon = G2dDaemon("/var/run/git2deploy.pid")
-    if arg == "start":
-        daemon.start()
-    elif arg == "stop":
-        daemon.stop()
-    elif arg == "restart":
-        daemon.restart()
-    else:
-        print("Invalid option")
-
-if __name__ == '__main__':
-    main(sys.argv[1])

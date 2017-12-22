@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+
+from g2d.git2deploy import G2dDaemon
+
+def main(arg):
+    daemon = G2dDaemon("/var/run/git2deploy.pid")
+    if arg == "start":
+        daemon.start()
+    elif arg == "stop":
+        daemon.stop()
+    elif arg == "restart":
+        daemon.restart()
+    else:
+        print("Invalid option")
+
+if __name__ == '__main__':
+    main(sys.argv[1])
