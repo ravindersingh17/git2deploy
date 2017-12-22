@@ -43,7 +43,9 @@ class connectionThread(threading.Thread):
         self.repodata = repodata
         super(connectionThread, self).__init__()
         try:
+            logging.debug("Removing old socket")
             os.unlink(sock_addr)
+            logging.debug("Creating socket")
             self.s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             logging.debug("Created socket")
             self.s.bind(sock_addr)
