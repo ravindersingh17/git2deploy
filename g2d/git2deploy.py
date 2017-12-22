@@ -31,7 +31,7 @@ class client(threading.Thread):
     def process(self):
         # Break data into repo name, secret and payload
         try:
-            repo, signature, payload = self.data.decode("utf-8").split(" ", 2)
+            repo, signature, payload = self.data.decode("utf-8").strip().split(" ", 2)
         except Exception as e:
             logging.info("Invalid data")
             return
