@@ -36,10 +36,12 @@ class client(threading.Thread):
         logging.debug("REPO:" + repo)
         logging.debug("SIGNATURE: " + signature)
         try:
+            logging.debug("Calculating hash")
             hashed = hmac.new(self.repodata[repo]["secret"], payload, sha1)
+            logging.debug("Calculated hash")
             logging.info("Calculated signature {0}".format(hashed.digest()))
         except Exception as e:
-            logging.critical("Exception occured while calculating signature {0}".format(str(e)))
+            logging.info("Exception occured while calculating signature {0}".format(str(e)))
 
 
     def send_msg(self,msg):
