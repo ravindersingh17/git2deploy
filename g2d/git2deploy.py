@@ -37,7 +37,9 @@ class client(threading.Thread):
             return
         logging.debug("REPO:" + repo)
         logging.debug("SIGNATURE: " + signature)
-        logging.debug("payload md5" + md5.new(payload).hexdigest())
+        h = md5()
+        h.update(payload.encode("utf-8"))
+        logging.debug("payload md5 " + h.hexdigest())
         try:
             logging.debug("Calculating hash")
             hashed = hmac.new(self.repodata[repo]["secret"], payload.encode("utf-8"), sha1)
