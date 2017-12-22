@@ -1,15 +1,39 @@
 #!/usr/bin/env python3
 
 from g2d.git2deploy import G2dDaemon
-
+import sys, os, json
+REPO_FILE = "/etc/git2deploy/repos.json"
+PID_FILE = "/var/run/git2deploy.pid"
 def main(arg):
-    daemon = G2dDaemon("/var/run/git2deploy.pid")
+    repodata = {}
+    if os.path.exists(REPO_FILE):
+        repodata = json.loads(open(REPO_FILE).read())
+
+    daemon = G2dDaemon(PID_FILE, repodata)
     if arg == "start":
         daemon.start()
     elif arg == "stop":
         daemon.stop()
     elif arg == "restart":
         daemon.restart()
+    elif arg == "addrepo":
+        reponame = input("Enter repository name:")
+        repouser = input("Enter github username of repository:")
+        deploydir = input("Enter directory where to deploy:")
+        secret = input("Enter hook secret token")
+
+        repodata[reponame] = {}
+        repodata[reponame]["user"] = repouser
+        repodata[reponame]["deploydir"] = deploydir
+        repodata[reponame]["secret"] = secret
+
+        if not os.path.exists("/etc/git2deploy"): os.mkdir("/etc/git2deploy")
+        rfile = open(REPO_FILE, "w")
+        rfile.write(json.dumps(repodata))
+        rfile.close()
+        daemon.stop()
+        daemon = G2dDaemon(PID_FILE, repodata)
+        daemon.start()
     else:
         print("Invalid option")
 

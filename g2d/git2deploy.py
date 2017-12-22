@@ -5,19 +5,32 @@ import logging
 import time
 from g2d.daemon import Daemon
 SOCK_ADDR = "/tmp/git2deploy.sock"
+LOG_FILE = "/var/log/git2deploy.log"
 
 class client(threading.Thread):
-    def __init__(self, conn):
+    def __init__(self, conn, repodata):
         super(client, self).__init__()
         self.conn = conn
         self.data = b""
+        self.repodata = repodata
 
     def run(self):
         while True:
-            self.data = self.data + self.conn.recv(1024)
+            data = self.conn.recv(1024)
+            if not data:
+                break
+            self.data = self.data + data
             if self.data.endswith(b"\r\n"):
-                logging.info(self.data.decode("utf-8"))
-                self.data = b""
+                self.process()
+                return
+
+    def process(self):
+        # Break data into repo name, secret and payload
+        repo, secret, payload = self.data.decode("utf-8").split(" ", 2)
+        logging.info("REPO:" + repo)
+        logging.info("SECRET: " + secret)
+        logging.info("PAYLOAD: " + payload)
+
 
     def send_msg(self,msg):
         self.conn.send(msg)
@@ -26,7 +39,8 @@ class client(threading.Thread):
         self.conn.close()
 
 class connectionThread(threading.Thread):
-    def __init__(self, sock_addr):
+    def __init__(self, sock_addr, repodata):
+        self.repodata = repodata
         super(connectionThread, self).__init__()
         try:
             os.unlink(sock_addr)
@@ -43,17 +57,18 @@ class connectionThread(threading.Thread):
             logging.info("Waiting for connection..")
             conn, address = self.s.accept()
             logging.info("Client connected")
-            c = client(conn)
+            c = client(conn, repodata)
             c.start()
             self.clients.append(c)
 
 class G2dDaemon(Daemon):
 
-    def __init__(self, pidfile):
+    def __init__(self, pidfile, repodata):
+        self.repodata = repodata
         super(G2dDaemon, self).__init__(pidfile)
     def run(self):
-        logging.basicConfig(filename="/var/log/git2deploy.log", level=logging.DEBUG)
-        get_conns = connectionThread(SOCK_ADDR)
+        logging.basicConfig(filename=LOG_FILE, level=logging.DEBUG)
+        get_conns = connectionThread(SOCK_ADDR, self.repodata)
         get_conns.start()
         while True:
             time.sleep(.1)

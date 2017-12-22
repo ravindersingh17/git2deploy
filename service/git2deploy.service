@@ -1,0 +1,11 @@
+[Unit]
+Description=Git2Deploy Daemon
+After=syslog.target
+
+[Service]
+PIDFile=/var/run/git2deploy.pid
+ExecStart=/usr/bin/g2d start
+ExecStop=/usr/bin/g2d stop
+
+[Install]
+WantedBy=multi-user.target

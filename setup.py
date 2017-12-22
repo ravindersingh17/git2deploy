@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from setuptools import setup
 
 setup(
         name="git2deploy",
@@ -11,5 +12,7 @@ setup(
         python_requires=">=3",
         packages=["g2d"],
         scripts=["bin/g2d"],
+        data_files=[("/var/www/html/", ["php/webhook.php"]),
+            ("/usr/lib/systemd/system/", ["service/git2deploy.service"])],
         )
 
