@@ -5,7 +5,7 @@ import logging
 import time
 from g2d.daemon import Daemon
 from hashlib import sha1
-import hmac
+import hmac,md5
 SOCK_ADDR = "/tmp/git2deploy.sock"
 LOG_FILE = "/var/log/git2deploy.log"
 
@@ -33,13 +33,15 @@ class client(threading.Thread):
             repo, signature, payload = self.data.decode("utf-8").split(" ", 2)
         except Exception as e:
             logging.info("Invalid data")
+            return
         logging.debug("REPO:" + repo)
         logging.debug("SIGNATURE: " + signature)
+        logging.debug("payload md5" + md5.new(payload).hexdigest())
         try:
             logging.debug("Calculating hash")
             hashed = hmac.new(self.repodata[repo]["secret"], payload.encode("utf-8"), sha1)
             logging.debug("Calculated hash")
-            logging.info("Calculated signature {0}".format(hashed.digest()))
+            logging.info("Calculated signature {0}".format(hashed.hexdigest()))
         except Exception as e:
             logging.info("Exception occured while calculating signature {0}".format(str(e)))
 
