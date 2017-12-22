@@ -51,8 +51,8 @@ class connectionThread(threading.Thread):
             self.s.bind(sock_addr)
             logging.debug("Bound to socket")
             self.s.listen(5)
-        except socket.error:
-            logging.critical('Failed to create socket')
+        except socket.error as e:
+            logging.critical('Failed to create socket: '. str(e))
             sys.exit()
         except FileNotFoundError:
             pass
