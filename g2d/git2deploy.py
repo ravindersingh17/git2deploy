@@ -43,8 +43,10 @@ class connectionThread(threading.Thread):
         self.repodata = repodata
         super(connectionThread, self).__init__()
         try:
-            logging.debug("Removing old socket")
             os.unlink(sock_addr)
+        except FileNotFoundError:
+            pass
+        try:
             logging.debug("Creating socket")
             self.s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             logging.debug("Created socket")
@@ -54,8 +56,6 @@ class connectionThread(threading.Thread):
         except socket.error as e:
             logging.critical('Failed to create socket: {0}'.format(str(e)))
             sys.exit()
-        except FileNotFoundError:
-            pass
         self.clients = []
 
     def run(self):
