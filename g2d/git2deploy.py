@@ -26,15 +26,14 @@ class client(threading.Thread):
                 return
 
     def process(self):
-        logging.info("Data {0}".format(self.data))
         # Break data into repo name, secret and payload
         try:
             repo, secret, payload = self.data.decode("utf-8").split(" ", 2)
         except Exception as e:
-            logging.info("Error {0}".format(str(e)))
-        logging.info("REPO:" + repo)
-        logging.info("SECRET: " + secret)
-        logging.info("PAYLOAD: " + payload)
+            logging.info("Invalid data")
+        logging.debug("REPO:" + repo)
+        logging.debug("SECRET: " + secret)
+        logging.debug("PAYLOAD: " + payload)
 
 
     def send_msg(self,msg):
