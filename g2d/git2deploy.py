@@ -35,8 +35,10 @@ class client(threading.Thread):
         except Exception as e:
             logging.info("Invalid data")
             return
-        logging.debug("REPO:" + repo.decode("utf-8"))
-        logging.debug("SIGNATURE: " + signature.decode("utf-8"))
+        repo = repo.decode("utf-8")
+        signature = signature.decode("utf-8")
+        logging.debug("REPO:" + repo)
+        logging.debug("SIGNATURE: " + signature)
         h = md5()
         h.update(payload)
         logging.debug("payload md5 " + h.hexdigest())
