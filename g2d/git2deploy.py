@@ -45,7 +45,9 @@ class connectionThread(threading.Thread):
         try:
             os.unlink(sock_addr)
             self.s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            logging.debug("Created socket")
             self.s.bind(sock_addr)
+            logging.debug("Bound to socket")
             self.s.listen(5)
         except socket.error:
             logging.critical('Failed to create socket')
