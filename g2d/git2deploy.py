@@ -59,7 +59,8 @@ class client(threading.Thread):
         logging.info("Cloning repository: " + "git clone https://github.com/{0}/{1}.git {2}".format(self.repodata[repo]["user"], repo, tmpPath))
         executer.run("git clone https://github.com/{0}/{1}.git {2}".format(self.repodata[repo]["user"], repo, tmpPath))
         logging.info("Copying files")
-        shutil.copytree(tmpPath, self.repodata[repo]["deploydir"], ignore=shutil.ignore_patterns(".git", ".gitignore"))
+        os.chdir(tmpPath)
+        executer.run("git archive master | tar -x -C {0}".format(self.repodata[repo]["deploydir"]))
         return
 
 
