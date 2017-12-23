@@ -7,6 +7,9 @@ from g2d.daemon import Daemon
 from hashlib import sha1
 from hashlib import md5
 import hmac
+import shutil
+from executer import executer
+
 SOCK_ADDR = "/tmp/git2deploy.sock"
 LOG_FILE = "/var/log/git2deploy.log"
 
@@ -25,10 +28,7 @@ class client(threading.Thread):
                 break
             self.data = self.data + data
             if self.data.endswith(b"\r\n"):
-                if self.process():
-                    self.conn.send(b"Signatures Match")
-                else:
-                    self.conn.send(b"Signatures do not match")
+                self.process()
                 self.conn.close()
 
     def process(self):
@@ -39,6 +39,9 @@ class client(threading.Thread):
             logging.info("Invalid data")
             return
         repo = repo.decode("utf-8")
+        if repo not in self.repodata:
+            logging.info("Repo data not added. Add repo data for {0}". format(repo))
+            return
         signature = signature.decode("utf-8")
         logging.debug("REPO:" + repo)
         logging.debug("SIGNATURE: " + signature)
@@ -47,9 +50,21 @@ class client(threading.Thread):
             logging.info("Calculated signature {0}".format(calculatedSignature))
         except Exception as e:
             logging.info("Exception occured while calculating signature {0}".format(str(e)))
-        if "sha1=" + calculatedSignature == signature:
-            return True
-        return False
+        if "sha1=" + calculatedSignature != signature:
+            return
+        tmpPath = "/tmp/{}".format(repo)
+        if os.path.exists(tmpPath):
+            shutil.rmtree(tmpPath)
+        os.mkdir(tmpPath)
+        logging.info("Cloning repository")
+        executer.run("git clone https://github.com/{0}/{1}.git {2}".format(self.repodata[repo]["user"], repo, tmpPath))
+        logging.info("Copying files")
+        shutil.copytree(tmpPath, self.repodata[repo]["deploydir"], ignore=shutil.ignore_patterns(".git", ".gitignore"))
+        return
+
+
+
+
 
 
     def send_msg(self,msg):
