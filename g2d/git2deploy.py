@@ -8,7 +8,7 @@ from hashlib import sha1
 from hashlib import md5
 import hmac
 import shutil
-from executer import executer
+from g2d.executer import executer
 
 SOCK_ADDR = "/tmp/git2deploy.sock"
 LOG_FILE = "/var/log/git2deploy.log"
@@ -52,11 +52,11 @@ class client(threading.Thread):
             logging.info("Exception occured while calculating signature {0}".format(str(e)))
         if "sha1=" + calculatedSignature != signature:
             return
-        tmpPath = "/tmp/{}".format(repo)
+        tmpPath = "/root/g2dfiles/{}".format(repo)
         if os.path.exists(tmpPath):
             shutil.rmtree(tmpPath)
         os.mkdir(tmpPath)
-        logging.info("Cloning repository")
+        logging.info("Cloning repository: " + "git clone https://github.com/{0}/{1}.git {2}".format(self.repodata[repo]["user"], repo, tmpPath))
         executer.run("git clone https://github.com/{0}/{1}.git {2}".format(self.repodata[repo]["user"], repo, tmpPath))
         logging.info("Copying files")
         shutil.copytree(tmpPath, self.repodata[repo]["deploydir"], ignore=shutil.ignore_patterns(".git", ".gitignore"))
