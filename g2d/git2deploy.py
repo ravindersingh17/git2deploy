@@ -25,8 +25,11 @@ class client(threading.Thread):
                 break
             self.data = self.data + data
             if self.data.endswith(b"\r\n"):
-                self.process()
-                return
+                if self.process():
+                    self.conn.send(b"Signatures Match")
+                else:
+                    self.conn.send(b"Signatures do not match")
+                self.conn.close()
 
     def process(self):
         # Break data into repo name, secret and payload
@@ -39,16 +42,14 @@ class client(threading.Thread):
         signature = signature.decode("utf-8")
         logging.debug("REPO:" + repo)
         logging.debug("SIGNATURE: " + signature)
-        h = md5()
-        h.update(payload)
-        logging.debug("payload md5 " + h.hexdigest())
         try:
-            logging.debug("Calculating hash")
-            hashed = hmac.new(self.repodata[repo]["secret"].encode("utf-8"), payload, sha1)
-            logging.debug("Calculated hash")
-            logging.info("Calculated signature {0}".format(hashed.hexdigest()))
+            calculatedSignature = hmac.new(self.repodata[repo]["secret"].encode("utf-8"), payload, sha1).hexdigest()
+            logging.info("Calculated signature {0}".format(calculatedSignature))
         except Exception as e:
             logging.info("Exception occured while calculating signature {0}".format(str(e)))
+        if "sha1=" + calculatedSignature == signature:
+            return True
+        return False
 
 
     def send_msg(self,msg):
