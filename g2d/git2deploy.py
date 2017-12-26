@@ -56,6 +56,7 @@ class client(threading.Thread):
         if os.path.exists(tmpPath):
             shutil.rmtree(tmpPath)
         os.mkdir(tmpPath)
+        os.chdir(tmpPath)
         logging.info("Cloning repository: " + "git clone https://github.com/{0}/{1}.git {2}".format(self.repodata[repo]["user"], repo, tmpPath))
         executer.run("git clone https://github.com/{0}/{1}.git {2}".format(self.repodata[repo]["user"], repo, tmpPath))
         logging.info("Copying files")

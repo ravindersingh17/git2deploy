@@ -10,6 +10,6 @@ class executer:
         return ret
 
     def runwithoutput(command):
-        ret = subprocess.call(command, stdout=subprocess.PIPE, shell=True)
-        ret.output = ret.stdout.decode('utf-8')
+        ret = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+        ret.output = ret.stdout.read().decode('utf-8')
         return ret
