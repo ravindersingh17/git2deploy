@@ -3,6 +3,7 @@ import threading
 import sys, os
 import logging
 import time
+import requests
 from g2d.daemon import Daemon
 from hashlib import sha1
 from hashlib import md5
@@ -31,8 +32,14 @@ class client(threading.Thread):
                 self.process()
                 self.conn.close()
 
+    def send_dev_message(self):
+        hangouts_port = 16000
+        payload = {"message": "foobar"}
+        r = requests.post("https://localhost:16000",data=payload)
+
     def process(self):
         # Break data into repo name, secret and payload
+        self.send_dev_message("Git payload received")
         try:
             repo, signature, payload = self.data.strip().split(b" ", 2)
         except Exception as e:
