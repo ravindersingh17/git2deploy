@@ -40,7 +40,6 @@ class client(threading.Thread):
 
     def process(self):
         # Break data into repo name, secret and payload
-        self.send_dev_message("Git payload received")
         try:
             repo, signature, payload = self.data.strip().split(b" ", 2)
         except Exception as e:
@@ -60,21 +59,18 @@ class client(threading.Thread):
             logging.info("Exception occured while calculating signature {0}".format(str(e)))
         if "sha1=" + calculatedSignature != signature:
             return
-        tmpPath = "/root/g2dfiles/{}".format(repo)
-        if os.path.exists(tmpPath):
-            shutil.rmtree(tmpPath)
-        os.mkdir(tmpPath)
-        os.chdir(tmpPath)
-        logging.info("Cloning repository: " + "git clone https://github.com/{0}/{1}.git {2}".format(self.repodata[repo]["user"], repo, tmpPath))
-        executer.run("git clone https://github.com/{0}/{1}.git {2}".format(self.repodata[repo]["user"], repo, tmpPath))
-        logging.info("Copying files")
-        os.chdir(tmpPath)
-        executer.run("git archive master | tar -x -C {0}".format(self.repodata[repo]["deploydir"]))
-        return
-
-
-
-
+        self.send_dev_message("Repository {} updated".format(repo))
+        if self.repodata[repo]["deploydir"] != "":
+            tmpPath = "/root/g2dfiles/{}".format(repo)
+            if os.path.exists(tmpPath):
+                shutil.rmtree(tmpPath)
+            os.mkdir(tmpPath)
+            os.chdir(tmpPath)
+            logging.info("Cloning repository: " + "git clone https://github.com/{0}/{1}.git {2}".format(self.repodata[repo]["user"], repo, tmpPath))
+            executer.run("git clone https://github.com/{0}/{1}.git {2}".format(self.repodata[repo]["user"], repo, tmpPath))
+            logging.info("Copying files")
+            os.chdir(tmpPath)
+            executer.run("git archive master | tar -x -C {0}".format(self.repodata[repo]["deploydir"]))
 
 
     def send_msg(self,msg):

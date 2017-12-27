@@ -19,8 +19,8 @@ def main(arg):
     elif arg == "addrepo":
         reponame = input("Enter repository name:")
         repouser = input("Enter github username of repository:")
-        deploydir = input("Enter directory where to deploy:")
-        secret = input("Enter hook secret token")
+        secret = input("Enter hook secret token:")
+        deploydir = input("Enter directory where to deploy(Leave blank if no deployment necassary):")
 
         repodata[reponame] = {}
         repodata[reponame]["user"] = repouser
