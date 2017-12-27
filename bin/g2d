@@ -31,10 +31,7 @@ def main(arg):
         rfile = open(REPO_FILE, "w")
         rfile.write(json.dumps(repodata))
         rfile.close()
-        daemon.stop()
-        time.sleep(2)
-        daemon = G2dDaemon(PID_FILE, repodata)
-        daemon.start()
+        print("Restart the git2deploy service for changes to take effect")
     elif arg == "list":
         print(repodata)
     elif arg == "delrepo":
@@ -46,8 +43,7 @@ def main(arg):
         rfile = open(REPO_FILE, "w")
         rfile.write(json.dumps(repodata))
         rfile.close()
-        daemon.stop()
-        daemon.start()
+        print("Restart the git2deploy service for changes to take effect")
     else:
         print("Invalid option")
 
