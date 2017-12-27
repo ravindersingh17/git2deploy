@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys, os, time, atexit
-from signal import SIGTERM
+from signal import SIGTERM, SIGHUP
 
 class Daemon:
 	"""
@@ -14,6 +14,7 @@ class Daemon:
 		self.stdout = stdout
 		self.stderr = stderr
 		self.pidfile = pidfile
+
 
 	def daemonize(self):
 		"""
