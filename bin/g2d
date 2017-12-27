@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from g2d.git2deploy import G2dDaemon
-import sys, os, json
+import sys, os, json, time
 REPO_FILE = "/etc/git2deploy/repos.json"
 PID_FILE = "/var/run/git2deploy.pid"
 def main(arg):
@@ -32,6 +32,7 @@ def main(arg):
         rfile.write(json.dumps(repodata))
         rfile.close()
         daemon.stop()
+        time.sleep(2)
         daemon = G2dDaemon(PID_FILE, repodata)
         daemon.start()
     else:
