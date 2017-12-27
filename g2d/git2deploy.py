@@ -35,14 +35,19 @@ class client(threading.Thread):
                 self.conn.close()
 
     def send_dev_message(self, payload):
-        try:
-            data = json.loads(parse_qs(payload.decode("utf-8"))["payload"][0])
-        except Exception as e:
-            logging.info(str(e))
-        logging.info(data.keys())
-#        hangouts_port = 16000
-#        headers = {"content-type": "application/json"}
-#        r = requests.post("https://localhost:16000/1",data=json.dumps(payload),headers=headers, verify=False)
+        data = json.loads(parse_qs(payload.decode("utf-8"))["payload"][0])
+        send = "<b>{} updated</b>\n".format(data["repository"]["name"])
+        send += "Diff: {}\n".format(data["compare"])
+        for c in data["commits"]:
+            send += "Commit: {}\n".format(c["url"])
+            send += "Message: {}\n".format(c["message"])
+            send += "Author: {}\n".format(c["author"]["name"])
+            for f in c["added"]: send += "A: {}\n".format(f)
+            for f in c["removed"]: send += "D: {}\n".format(f)
+            for f in c["modified"]: send += "M: {}\n".format(f)
+        hangouts_port = 16000
+        headers = {"content-type": "application/json"}
+        r = requests.post("https://localhost:16000/1",data=json.dumps(send),headers=headers, verify=False)
 
     def process(self):
         # Break data into repo name, secret and payload
