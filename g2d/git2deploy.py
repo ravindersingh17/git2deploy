@@ -9,6 +9,7 @@ from hashlib import sha1
 from hashlib import md5
 import hmac
 import shutil
+import json
 from g2d.executer import executer
 
 SOCK_ADDR = "/tmp/git2deploy.sock"
@@ -32,10 +33,11 @@ class client(threading.Thread):
                 self.process()
                 self.conn.close()
 
-    def send_dev_message(self):
+    def send_dev_message(self, payload):
         hangouts_port = 16000
-        payload = {"message": "foobar"}
-        r = requests.post("https://localhost:16000",data=payload)
+        payload = {"echo": payload}
+        headers = {"content-type": "application/json"}
+        r = requests.post("https://localhost:16000",data=json.dumps(payload),headers=headers, verify=False)
 
     def process(self):
         # Break data into repo name, secret and payload
