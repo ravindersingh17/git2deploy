@@ -35,7 +35,7 @@ class client(threading.Thread):
 
     def send_dev_message(self, payload):
         try:
-            data = json.loads(payload)
+            data = json.loads(payload.decode("utf-8"))
         except Exception as e:
             logging.info(str(e))
         logging.info(data.keys())
