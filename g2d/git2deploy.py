@@ -70,6 +70,7 @@ class client(threading.Thread):
             logging.info("Exception occured while calculating signature {0}".format(str(e)))
         if "sha1=" + calculatedSignature != signature:
             return
+        logging.info("Sending message to registered developers")
         self.send_dev_message(payload)
         if self.repodata[repo]["deploydir"] != "":
             tmpPath = "/root/g2dfiles/{}".format(repo)
