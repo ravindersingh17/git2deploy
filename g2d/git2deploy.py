@@ -11,6 +11,7 @@ import hmac
 import shutil
 import json
 from g2d.executer import executer
+from urllib.parse import parse_qs
 
 SOCK_ADDR = "/tmp/git2deploy.sock"
 LOG_FILE = "/var/log/git2deploy.log"
@@ -35,7 +36,7 @@ class client(threading.Thread):
 
     def send_dev_message(self, payload):
         try:
-            data = json.loads(payload.decode("utf-8"))
+            data = json.loads(parse_qs(payload.decode("utf-8"))["payload"][0])
         except Exception as e:
             logging.info(str(e))
         logging.info(data.keys())
