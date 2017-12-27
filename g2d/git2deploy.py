@@ -34,9 +34,14 @@ class client(threading.Thread):
                 self.conn.close()
 
     def send_dev_message(self, payload):
-        hangouts_port = 16000
-        headers = {"content-type": "application/json"}
-        r = requests.post("https://localhost:16000/1",data=json.dumps(payload),headers=headers, verify=False)
+        try:
+            data = json.loads(payload)
+        except Exception as e:
+            logging.info(str(e))
+        logging.info(data.keys())
+#        hangouts_port = 16000
+#        headers = {"content-type": "application/json"}
+#        r = requests.post("https://localhost:16000/1",data=json.dumps(payload),headers=headers, verify=False)
 
     def process(self):
         # Break data into repo name, secret and payload
@@ -59,7 +64,7 @@ class client(threading.Thread):
             logging.info("Exception occured while calculating signature {0}".format(str(e)))
         if "sha1=" + calculatedSignature != signature:
             return
-        self.send_dev_message("Repository {} updated".format(repo))
+        self.send_dev_message(payload)
         if self.repodata[repo]["deploydir"] != "":
             tmpPath = "/root/g2dfiles/{}".format(repo)
             if os.path.exists(tmpPath):
