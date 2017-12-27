@@ -35,6 +35,19 @@ def main(arg):
         time.sleep(2)
         daemon = G2dDaemon(PID_FILE, repodata)
         daemon.start()
+    elif arg == "list":
+        print(repodata)
+    elif arg == "delrepo":
+        reponame = input("Enter repository name:")
+        if reponame not in repodata:
+            print("This repository does not exist")
+            return
+        del repodata[reponame]
+        rfile = open(REPO_FILE, "w")
+        rfile.write(json.dumps(repodata))
+        rfile.close()
+        daemon.stop()
+        daemon.start()
     else:
         print("Invalid option")
 
