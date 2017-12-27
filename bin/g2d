@@ -33,7 +33,7 @@ def main(arg):
         rfile.close()
         print("Restart the git2deploy service for changes to take effect")
     elif arg == "list":
-        print(repodata)
+        for repo in repodata: print(repo)
     elif arg == "delrepo":
         reponame = input("Enter repository name:")
         if reponame not in repodata:
