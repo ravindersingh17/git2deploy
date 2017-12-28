@@ -48,6 +48,7 @@ class client(threading.Thread):
         hangouts_port = 16000
         headers = {"content-type": "application/json"}
         r = requests.post("https://localhost:16000/1",data=json.dumps(send),headers=headers, verify=False)
+        return r
 
     def process(self):
         # Break data into repo name, secret and payload
@@ -71,7 +72,8 @@ class client(threading.Thread):
         if "sha1=" + calculatedSignature != signature:
             return
         logging.info("Sending message to registered developers")
-        self.send_dev_message(payload)
+        message_result = self.send_dev_message(payload)
+        logging.info("Sending status: {}".format(message_result))
         if self.repodata[repo]["deploydir"] != "":
             tmpPath = "/root/g2dfiles/{}".format(repo)
             if os.path.exists(tmpPath):
