@@ -19,7 +19,14 @@ class webhookReceiver(AsyncRequestHandler):
                     yield from self.bot.coro_send_message(conv, parsed_content["message"])
 
         elif parsed_content["to"] == "tpb":
-            yield from self.bot.coro_send_message(parsed_content["tpbrecipient"], parsed_content["message"])
+            tpbrecipient = parsed_content["tpbrecipient"]
+            if tpbrecipient == "all":
+                tpb_convs = self.bot.user_memory_get("0", "tpbregistered")
+                if tpb_convs:
+                    for conv in tpb_convs:
+                        yield from self.coro_send_message(conv, parsed_content["message"])
+            else:
+                yield from self.bot.coro_send_message(parsed_content["tpbrecipient"], parsed_content["message"])
 
         else:
             pass
