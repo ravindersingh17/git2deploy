@@ -124,7 +124,6 @@ class G2dDaemon(Daemon):
 
     def __init__(self, pidfile, repodata):
         self.repodata = repodata
-        signal.signal(signal.SIGHUP, reload)
         super(G2dDaemon, self).__init__(pidfile)
     def run(self):
         logging.basicConfig(filename=LOG_FILE, level=logging.DEBUG)
@@ -132,6 +131,3 @@ class G2dDaemon(Daemon):
         get_conns.start()
         while True:
             time.sleep(.1)
-
-    def reload():
-        logging.info("SIGHUP received, reloading config")
