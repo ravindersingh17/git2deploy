@@ -47,7 +47,8 @@ class client(threading.Thread):
             for f in c["modified"]: send += "M: {}\n".format(f)
         hangouts_port = 16000
         headers = {"content-type": "application/json"}
-        r = requests.post("https://localhost:16000/1",data=json.dumps(send),headers=headers, verify=False)
+        send_pack = {"to": "developers", "message": send}
+        r = requests.post("https://localhost:16000/1",data=json.dumps(send_pack),headers=headers, verify=False)
         return r
 
     def process(self):
